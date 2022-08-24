@@ -5,17 +5,24 @@
 <div class="jumbotron mx-auto mt-5" style="max-height: fit-content; min-width: 400px; max-width: 500px">
     <h1 class="display-4 mb-3" style="text-align: center;">Welcome to Cosmos!</h1>
     <hr class="my-4">
-    <h2 class="lead">Cosmos is a web-application that will provide users with data on missions/launches and events regarding space travel.</h2>
-    <p class="lead">The application will also provide the real-time location of the ISS around the earth along with information about space agencies currently operating.</p>
+    <h2 class="lead" style="text-align: center;">Cosmos is a web-application that will provide users with data on missions/launches and events regarding space travel.</h2>
+    <p class="lead" style="text-align: center;">The application will also provide the real-time location of the ISS around the earth along with information about space agencies currently operating.</p>
     <hr>
 
-    <h2 class="lead" style="text-align: center;">NASA's "Astronomy Picture of the Day"</h2>
+    <h1 class="lead" style="text-align: center;">NASA's "Astronomy Picture of the Day"</h1>
     <div class="card" style="width: 28rem;">
-        <img src="..." class="card-img-top" alt="...">
+        <img src="{{ jsonResponse.url }}" class="card-img-top" alt="...">
         <div class="card-body">
-            <h5 class="card-title">Picture title</h5>
-            <h5 class="card-title">Submittor</h5>
-        <p class="card-text">Photo explination</p>
+            <h5 class="card-title" style="text-align: center;">{{ jsonResponse.title }}</h5>
+            <hr>
+
+        {% if jsonResponse.copyright %}
+            <h5 class="card-title" style="text-align: center;">By: {{ jsonResponse.copyright }}</h5>
+        {% endif %}
+
+        <p class="card-text" style="text-align: center;">{{ jsonResponse.explanation }}</p>
+        <hr>
+        <p class="card-text" style="text-align: center;">Today's Date: {{ jsonResponse.date }}</p>
         </div>
     </div>
 
