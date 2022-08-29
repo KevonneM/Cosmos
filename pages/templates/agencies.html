@@ -4,4 +4,61 @@
 
 Agencies Page
 
+<form action="{% url 'pages:agencies' %}" method="post" class="form-inline my-2 my-lg-0">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button name='submit' class='btn btn-outline-success mb-2'>Find Agency</button>
+</form>
+
+{% if jsonResponse %}
+{% for query in jsonResponse.results %}
+
+<div class="card" style="width: 28rem;">
+    {% if query.image_url %}
+    <img src="{{ query.image_url }}" class="card-img-top" alt="...">
+    {% endif %}
+    <div class="card-body">
+        <h3 class="card-title" style="text-align: center;">{{ query.abbrev }}</h3>
+        <h5 class="card-title" style="text-align: center;">
+        Agency Name: {{ query.name }}</h5>
+        <hr>
+
+        <h5 class="card-title" style="text-align: center;">Founding_year: {{ query.founding_year }}</h5>
+
+    <p class="card-text" style="text-align: center;">Country Code: {{ query.country_code }}</p>
+    <hr>
+    <p class="card-text" style="text-align: center;">{{ query.description }}</p>
+    <p class="card-text" style="text-align: center;">Agency Type: {{ query.type }}</p>
+    </div>
+</div>
+{% empty %}
+
+<h1>No Results Available.</h1>
+
+{% endfor %}
+{% endif %}
+
+<!--
+
+{% if jsonResponse %}
+    {% for result in jsonResponse %}
+    <div class="card" style="width: 28rem;">
+        <img src="..." class="card-img-top" alt="...">
+        <div class="card-body">
+            <h5 class="card-title" style="text-align: center;">
+            Agency Name: {{ result }}</h5>
+            <hr>
+
+            <h5 class="card-title" style="text-align: center;">By: {{ result }}</h5>
+
+        <p class="card-text" style="text-align: center;">Country Code: {{ result }}</p>
+        <hr>
+        <p class="card-text" style="text-align: center;">Today's Date: {{ result }}</p>
+        </div>
+    </div>
+    {% endfor %}
+    
+-->
+{% endif %}
+
 {% endblock content %}

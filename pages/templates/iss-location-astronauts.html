@@ -2,6 +2,25 @@
 
 {% block content %}
 
-iss location and astronauts Page
+<h1 style="text-align: center;">ISS Location and current in space Astronauts</h1>
+
+<h2 style="text-align: center;">There are {{ jsonResponse.number }} people in space right now!</h2>
+
+<table class="table table-hover table-sm">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col" style="text-align: center;">Full-Name</th>
+        <th scope="col">Space-Craft</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for person in jsonResponse.people %}
+        <tr>
+            <td style="text-align: center;">{{ person.name }}</td>
+            <td>{{ person.craft }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 
 {% endblock content %}
