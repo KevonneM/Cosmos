@@ -1,6 +1,8 @@
 # Create your form for users space queries here.
 from django import forms
-from django.forms import fields
 
 class AgencyForm(forms.Form):
     agency_name = forms.CharField(label='agency_name', max_length=50)
+
+class AstronautForm(forms.Form):
+    astronaut_name = forms.CharField(label='astronaut_name', max_length=50)
