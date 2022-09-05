@@ -3,5 +3,46 @@
 {% block content %}
 
 Launches/events page
+<form action="{% url 'pages:launches-events' %}" method="post" class="form-inline my-2 my-lg-0">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button name='submit' class='btn btn-outline-success mb-2'>Search for Launch</button>
+  </form>
+
+  {% if jsonResponse %}
+{% for query in jsonResponse.results %}
+
+<div class="card" style="width: 28rem;">
+    <div class="card-body">
+        <h3 class="card-title" style="text-align: center;">{{ query.name }}</h3>
+        <h5 class="card-title" style="text-align: center;">{{ query.launch_service_provider.name }}</h5>
+        <p class="card-title" style="text-align: center;">{{ query.pad.location.name }}</p>
+        <hr>
+        {% if query.image %}
+            <img src="{{ query.image }}" class="card-img-top" alt="...">
+        {% endif %}
+    <hr>
+    <p class="card-text" style="text-align: center;">Live countdown: {{ query.date_of_birth }}</p>
+    <p class="card-text lead" style="text-align: center;">Scheduled Date: {{ query.window_start }}</p>
+    <p class="card-text lead" style="text-align: center;">Launch Status: {{ query.status.name }}</p>
+    <hr>
+    {% if streamURL %}
+    <div style="text-align: center;">
+        
+        <a href="{{ streamURL }}"><button class="btn btn-success">View Stream</button></a>
+    </div>
+    {% else %}
+    <h3 style="text-align: center;">No Stream available for this launch!</h3>
+    {% endif %}
+    <p class="card-text lead" style="text-align: center;">More info: redirect to detailed launch view</p>
+    <p class="card-text lead" style="text-align: center;">Share: auto link detailed view to clipboard</p>
+    </div>
+</div>
+{% empty %}
+
+<h1>No Results Available.</h1>
+
+{% endfor %}
+{% endif %}
 
 {% endblock content %}
