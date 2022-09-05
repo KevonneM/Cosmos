@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<form action="{% url 'pages:astronauts' %}" method="post" class="form-inline my-2 my-lg-0">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button name='submit' class='btn btn-outline-success mb-2'>Search for Astronaut</button>
+</form>
+
+{% if jsonResponse %}
+{% for query in jsonResponse.results %}
+
+<div class="card" style="width: 28rem;">
+    {% if query.profile_image %}
+    <img src="{{ query.profile_image }}" class="card-img-top" alt="...">
+    {% endif %}
+    <div class="card-body">
+        <h3 class="card-title" style="text-align: center;">{{ query.name }}</h3>
+        <h5 class="card-title" style="text-align: center;">
+        Agency: {{ query.agency.abbrev }}</h5>
+        <hr>
+
+        <h5 class="card-title" style="text-align: center;">{{ query.bio }}</h5>
+    <hr>
+    <p class="card-text" style="text-align: center;">Date of Birth: {{ query.date_of_birth }}</p>
+    {% if query.date_of_death %}
+      <p class="card-text" style="text-align: center;">Date of Death: {{ query.date_of_death }}</p>
+    {% endif %}
+    </div>
+</div>
+{% empty %}
+
+<h1>No Results Available.</h1>
+
+{% endfor %}
+{% endif %}
+
+{% endblock content %}
