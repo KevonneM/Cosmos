@@ -7,6 +7,8 @@ name = "pypi"
 django = "*"
 python-decouple = "*"
 requests = "*"
+pillow = "*"
+schedule = "*"
 
 [dev-packages]
 

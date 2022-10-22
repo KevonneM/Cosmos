@@ -7,42 +7,124 @@ Launches/events page
     {% csrf_token %}
     {{ form.as_p }}
     <button name='submit' class='btn btn-outline-success mb-2'>Search for Launch</button>
-  </form>
+</form>
 
-  {% if jsonResponse %}
-{% for query in jsonResponse.results %}
-
-<div class="card" style="width: 28rem;">
-    <div class="card-body">
-        <h3 class="card-title" style="text-align: center;">{{ query.name }}</h3>
-        <h5 class="card-title" style="text-align: center;">{{ query.launch_service_provider.name }}</h5>
-        <p class="card-title" style="text-align: center;">{{ query.pad.location.name }}</p>
-        <hr>
-        {% if query.image %}
-            <img src="{{ query.image }}" class="card-img-top" alt="...">
-        {% endif %}
-    <hr>
-    <p class="card-text" style="text-align: center;">Live countdown: {{ query.date_of_birth }}</p>
-    <p class="card-text lead" style="text-align: center;">Scheduled Date: {{ query.window_start }}</p>
-    <p class="card-text lead" style="text-align: center;">Launch Status: {{ query.status.name }}</p>
-    <hr>
-    {% if streamURL %}
-    <div style="text-align: center;">
+{% if page_obj %}
+<div class="container" style="width: 100vw">
+    <div class="row justify-content-center">
         
-        <a href="{{ streamURL }}"><button class="btn btn-success">View Stream</button></a>
+{% for query in page_obj %}
+
+<div class="card mb-4" style="width: 55rem;">
+    <div class="card-horizontal">
+        <div class="img-square-wrapper">
+            {% if query.image %}
+            <img class="card-img-top" src="{{ query.image }}" alt="Space">
+            {% endif %}
+        </div>
+        <div class="card-body">
+            <h4 class="card-title" style="text-align: center;">{{ query.name }}</h4>
+            <h5 class="card-title" style="text-align: center;">{{ query.launch_provider }}</h5>
+            <hr>
+            <p class="card-title" style="text-align: center;">{{ query.launch_location }}</p>
+            <p class="card-text lead" style="text-align: center;">Scheduled Date: {{ query.launch_date_time }}</p>
+            <p class="card-text" style="text-align: center;">Live countdown: countdown</p>
+            <p class="card-text lead" style="text-align: center;">Launch Status: {{ query.launch_status }}</p>
+        </div>
     </div>
-    {% else %}
-    <h3 style="text-align: center;">No Stream available for this launch!</h3>
-    {% endif %}
-    <p class="card-text lead" style="text-align: center;">More info: redirect to detailed launch view</p>
-    <p class="card-text lead" style="text-align: center;">Share: auto link detailed view to clipboard</p>
+    <div class="card-footer">
+        {% if query.stream_url %}
+            <div style="text-align: center;">
+                <a href="{{ query.stream_url }}"><button class="btn btn-success">View Stream</button></a>
+            </div>
+        {% else %}
+            <p style="text-align: center; padding-top: 10px;">
+                <small class="text-muted">No Stream available for this launch!</small>
+            </p>    
+        {% endif %}
     </div>
 </div>
+
 {% empty %}
 
 <h1>No Results Available.</h1>
 
 {% endfor %}
+        
+    </div>
+</div>
 {% endif %}
+
+{% if jsonResponse %}
+<div class="container" style="width: 100vw">
+    <div class="row justify-content-center">
+        
+{% for query in jsonResponse %}
+
+<div class="card mb-4" style="width: 55rem;">
+    <div class="card-horizontal">
+        <div class="img-square-wrapper">
+            {% if query.image %}
+            <img class="card-img-top" src="{{ query.image }}" alt="Space">
+            {% endif %}
+        </div>
+        <div class="card-body">
+            <h4 class="card-title" style="text-align: center;">{{ query.name }}</h4>
+            <h5 class="card-title" style="text-align: center;">{{ query.launch_service_provider.name }}</h5>
+            <hr>
+            <p class="card-title" style="text-align: center;">{{ query.pad.location.name }}</p>
+            <p class="card-text lead" style="text-align: center;">Scheduled Date: {{ query.window_start }}</p>
+            <p class="card-text" style="text-align: center;">Live countdown: countdown</p>
+            <p class="card-text lead" style="text-align: center;">Launch Status: {{ query.status.name }}</p>
+        </div>
+    </div>
+    <div class="card-footer">
+        {% if streamURL %}
+            <div style="text-align: center;">
+                <a href="{{ streamURL }}"><button class="btn btn-success">View Stream</button></a>
+            </div>
+        {% else %}
+            <p style="text-align: center; padding-top: 10px;">
+                <small class="text-muted">No Stream available for this launch!</small>
+            </p>    
+        {% endif %}
+    </div>
+</div>
+
+{% empty %}
+
+<h1>No Results Available.</h1>
+
+{% endfor %}
+        
+    </div>
+</div>
+{% endif %}
+
+<h2 style="text-align: center;">{{ resultCount }} Results Available</h2>
+
+<div class="pagination justify-content-center">
+
+    <span class="step-links">
+        <ul class="pagination">
+
+        {% if page_obj.has_previous %}
+            <a class="page-link" href="?page=1">&laquo; first</a>
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current mx-4" style="align-content: center;">
+            page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        </span>
+
+        {% if page_obj.has_next %}
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}">next</a>
+            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+
+        </ul>
+    </span>
+
+</div>
 
 {% endblock content %}
