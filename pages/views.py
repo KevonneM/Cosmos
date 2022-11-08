@@ -217,11 +217,14 @@ def launch_event_view(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
+    upcoming_launches = UpcomingLaunch.objects.all()
+
     # Context for Default launch display.
     context = {
         'form': form,
         'resultCount': resultCount,
         'page_obj': page_obj,
+        'upcoming_launches': upcoming_launches,
     }
     
     return render(request, 'launches-events.html', context)

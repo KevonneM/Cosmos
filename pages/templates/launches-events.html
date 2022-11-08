@@ -2,12 +2,13 @@
 
 {% block content %}
 
-Launches/events page
-<form action="{% url 'pages:launches-events' %}" method="post" class="form-inline my-2 my-lg-0">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button name='submit' class='btn btn-outline-success mb-2'>Search for Launch</button>
-</form>
+<div class="launch-input-form">
+    <form action="{% url 'pages:launches-events' %}" method="post" class="form-inline my-2 my-lg-0">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button name='submit' class='btn btn-outline-success mb-2'>Search for Launch</button>
+    </form>
+</div>
 
 {% if page_obj %}
 <div class="container" style="width: 100vw">
@@ -28,7 +29,9 @@ Launches/events page
             <hr>
             <p class="card-title" style="text-align: center;">{{ query.launch_location }}</p>
             <p class="card-text lead" style="text-align: center;">Scheduled Date: {{ query.launch_date_time }}</p>
-            <p class="card-text" style="text-align: center;">Live countdown: countdown</p>
+
+            <td><div class="launchCountdown" start="{{ query.launch_date_time }}"></div></td>
+
             <p class="card-text lead" style="text-align: center;">Launch Status: {{ query.launch_status }}</p>
         </div>
     </div>
@@ -74,7 +77,6 @@ Launches/events page
             <hr>
             <p class="card-title" style="text-align: center;">{{ query.pad.location.name }}</p>
             <p class="card-text lead" style="text-align: center;">Scheduled Date: {{ query.window_start }}</p>
-            <p class="card-text" style="text-align: center;">Live countdown: countdown</p>
             <p class="card-text lead" style="text-align: center;">Launch Status: {{ query.status.name }}</p>
         </div>
     </div>
@@ -126,5 +128,60 @@ Launches/events page
     </span>
 
 </div>
+
+<script>
+    $('.launchCountdown').each(function() {
+    this == $(this);
+    var launch_date = $(this).attr('start');
+    var matchDate = new Date(launch_date);
+    $(this).countdown({
+        until: matchDate,
+        description: 'Until Liftoff!'
+    });
+});
+</script>
+
+<style>
+    .launch-input-form{
+        display: flex;
+        justify-content: center;
+    }
+    body{
+        text-align: center;
+        background: #00ECB9;
+      font-family: sans-serif;
+      font-weight: 100;
+    }
+    h1{
+      color: #396;
+      font-weight: 100;
+      font-size: 40px;
+      margin: 40px 0px 20px;
+    }
+     #clockdiv{
+        font-family: sans-serif;
+        color: #fff;
+        display: inline-block;
+        font-weight: 100;
+        text-align: center;
+        font-size: 30px;
+    }
+    #clockdiv > div{
+        padding: 10px;
+        border-radius: 3px;
+        background: #00BF96;
+        display: inline-block;
+    }
+    #clockdiv div > span{
+        padding: 15px;
+        border-radius: 3px;
+        background: #00816A;
+        display: inline-block;
+    }
+    smalltext{
+        padding-top: 5px;
+        font-size: 16px;
+    }
+    </style>
 
 {% endblock content %}
