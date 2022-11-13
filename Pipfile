@@ -9,6 +9,7 @@ python-decouple = "*"
 requests = "*"
 pillow = "*"
 schedule = "*"
+django-crispy-forms = "*"
 
 [dev-packages]
 

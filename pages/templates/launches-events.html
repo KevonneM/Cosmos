@@ -1,12 +1,13 @@
 {% extends "base.html" %}
+{% load crispy_forms_filters %}
 
 {% block content %}
 
 <div class="launch-input-form">
     <form action="{% url 'pages:launches-events' %}" method="post" class="form-inline my-2 my-lg-0">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button name='submit' class='btn btn-outline-success mb-2'>Search for Launch</button>
+        {{ form|crispy }}
+        <button name='submit' class='btn btn-dark ml-2 mt-2 mb-2'>Search for Launch</button>
     </form>
 </div>
 
@@ -25,12 +26,14 @@
         </div>
         <div class="card-body">
             <h4 class="card-title" style="text-align: center;">{{ query.name }}</h4>
-            <h5 class="card-title" style="text-align: center;">{{ query.launch_provider }}</h5>
+            <h5 class="card-title" style="text-align: center; text-decoration: underline;">{{ query.launch_provider }}</h5>
             <hr>
             <p class="card-title" style="text-align: center;">{{ query.launch_location }}</p>
-            <p class="card-text lead" style="text-align: center;">Scheduled Date: {{ query.launch_date_time }}</p>
+            <p class="card-text lead mb-4" style="text-align: center;">Scheduled Date: {{ query.launch_date_time }}</p>
 
-            <td><div class="launchCountdown" start="{{ query.launch_date_time }}"></div></td>
+            <div class="mb-4">
+                <td><div class="launchCountdown" start="{{ query.launch_date_time }}"></div></td>
+            </div>
 
             <p class="card-text lead" style="text-align: center;">Launch Status: {{ query.launch_status }}</p>
         </div>
@@ -48,14 +51,17 @@
     </div>
 </div>
 
+
+
 {% empty %}
 
 <h1>No Results Available.</h1>
 
 {% endfor %}
         
-    </div>
 </div>
+</div>  
+  
 {% endif %}
 
 {% if jsonResponse %}
@@ -103,6 +109,8 @@
 </div>
 {% endif %}
 
+{% if page_obj %}
+
 <h2 style="text-align: center;">{{ resultCount }} Results Available</h2>
 
 <div class="pagination justify-content-center">
@@ -129,6 +137,8 @@
 
 </div>
 
+{% endif %}
+
 <script>
     $('.launchCountdown').each(function() {
     this == $(this);
@@ -146,9 +156,15 @@
         display: flex;
         justify-content: center;
     }
+    .card-horizontal{
+        background-color: #947696;
+    }
+    .card-footer{
+        background-color: #433445;
+    }
     body{
         text-align: center;
-        background: #00ECB9;
+        background: #557655;
       font-family: sans-serif;
       font-weight: 100;
     }

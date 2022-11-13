@@ -1,12 +1,66 @@
 {% extends "base.html" %}
+{% load crispy_forms_filters %}
 
 {% block content %}
 
-<form action="{% url 'pages:astronauts' %}" method="post" class="form-inline my-2 my-lg-0">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button name='submit' class='btn btn-outline-success mb-2'>Search for Astronaut</button>
-</form>
+<div class="astronaut-input-form">
+  <form action="{% url 'pages:astronauts' %}" method="post" class="form-inline my-2 my-lg-0">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <button name='submit' class='btn btn-dark ml-2 mt-2 mb-2'>Search for Astronaut</button>
+  </form>
+</div>
+
+{% if page_obj %}
+<div class="container" style="width: 100vw">
+    <div class="row justify-content-center">
+        
+{% for query in page_obj %}
+
+<div class="card mb-4" style="width: 55rem;">
+    <div class="card-horizontal">
+        <div class="img-square-wrapper">
+            {% if query.image %}
+            <img class="card-img-top" src="{{ query.image }}" alt="Space">
+            {% endif %}
+        </div>
+        <div class="card-body">
+            <h4 class="card-title" style="text-align: center;">{{ query.name }}</h4>
+            <p class="card-text lead mb-4" style="text-align: center; font-style: italic;">{{ query.status }}</p>
+            <h5 class="card-title" style="text-align: center; text-decoration: underline;">{{ query.nationality }}</h5>
+            <hr>
+            <p class="card-title" style="text-align: center; text-decoration: underline;">{{ query.agency }}</p>
+            <p class="card-text lead mb-4" style="text-align: center;">{{ query.age }}</p>
+            <p class="card-text lead mb-4" style="text-align: center;">{{ query.date_of_birth }}</p>
+            <p class="card-text lead mb-4" style="text-align: center;">{{ query.date_of_death }}</p>
+            <p class="card-text lead mb-4" style="text-align: center;">{{ query.bio }}</p>
+        </div>
+    </div>
+    <div class="card-footer">
+        {% if query.stream_url %}
+            <div style="text-align: center;">
+                <a href="{{ query.stream_url }}"><button class="btn btn-success">View Stream</button></a>
+            </div>
+        {% else %}
+            <p style="text-align: center; padding-top: 10px;">
+                <small class="text-muted">No Stream available for this launch!</small>
+            </p>    
+        {% endif %}
+    </div>
+</div>
+
+
+
+{% empty %}
+
+<h1>No Results Available.</h1>
+
+{% endfor %}  
+
+</div>
+</div>
+
+{% endif %}
 
 {% if jsonResponse %}
 {% for query in jsonResponse.results %}
@@ -35,5 +89,42 @@
 
 {% endfor %}
 {% endif %}
+
+{% if page_obj %}
+
+<h2 style="text-align: center;">{{ resultCount }} Results Available</h2>
+
+<div class="pagination justify-content-center">
+
+    <span class="step-links">
+        <ul class="pagination">
+
+        {% if page_obj.has_previous %}
+            <a class="page-link" href="?page=1">&laquo; first</a>
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current mx-4" style="align-content: center;">
+            page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        </span>
+
+        {% if page_obj.has_next %}
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}">next</a>
+            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+
+        </ul>
+    </span>
+
+</div>
+
+{% endif %}
+
+<style>
+    .astronaut-input-form{
+        display: flex;
+        justify-content: center;
+    }
+</style>
 
 {% endblock content %}

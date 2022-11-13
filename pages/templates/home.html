@@ -9,15 +9,15 @@
     <p class="lead" style="text-align: center;">The application will also provide the real-time location of the ISS around the earth along with information about space agencies currently operating.</p>
     <hr>
 
-    <h1 class="lead" style="text-align: center;">NASA's "Astronomy Picture of the Day"</h1>
+    <h1 class="lead mb-2" style="text-align: center; font-weight: bold;">NASA's "Astronomy Picture of the Day"</h1>
     <div class="card" style="width: 28rem;">
         <img src="{{ jsonResponse.url }}" class="card-img-top" alt="...">
         <div class="card-body">
-            <h5 class="card-title" style="text-align: center;">{{ jsonResponse.title }}</h5>
+            <h5 class="card-title" style="text-align: center; font-weight: bold;">{{ jsonResponse.title }}</h5>
             <hr>
 
         {% if jsonResponse.copyright %}
-            <h5 class="card-title" style="text-align: center;">By: {{ jsonResponse.copyright }}</h5>
+            <h5 class="card-title" style="text-align: center; font-weight: bold;">By: {{ jsonResponse.copyright }}</h5>
         {% endif %}
 
         <p class="card-text" style="text-align: center;">{{ jsonResponse.explanation }}</p>
