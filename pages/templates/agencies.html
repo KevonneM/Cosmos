@@ -1,14 +1,15 @@
 {% extends "base.html" %}
+{% load crispy_forms_filters %}
 
 {% block content %}
 
-Agencies Page
-
-<form action="{% url 'pages:agencies' %}" method="post" class="form-inline my-2 my-lg-0">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button name='submit' class='btn btn-outline-success mb-2'>Find Agency</button>
-</form>
+<div class="agency-input-form">
+    <form action="{% url 'pages:agencies' %}" method="post" class="form-inline my-2 my-lg-0">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button name='submit' class='btn btn-dark ml-2 mt-2 mb-2'>Search for Agency</button>
+    </form>
+</div>
 
 {% if jsonResponse %}
 {% for query in jsonResponse.results %}
@@ -38,27 +39,11 @@ Agencies Page
 {% endfor %}
 {% endif %}
 
-<!--
-
-{% if jsonResponse %}
-    {% for result in jsonResponse %}
-    <div class="card" style="width: 28rem;">
-        <img src="..." class="card-img-top" alt="...">
-        <div class="card-body">
-            <h5 class="card-title" style="text-align: center;">
-            Agency Name: {{ result }}</h5>
-            <hr>
-
-            <h5 class="card-title" style="text-align: center;">By: {{ result }}</h5>
-
-        <p class="card-text" style="text-align: center;">Country Code: {{ result }}</p>
-        <hr>
-        <p class="card-text" style="text-align: center;">Today's Date: {{ result }}</p>
-        </div>
-    </div>
-    {% endfor %}
-    
--->
-{% endif %}
+<style>
+    .agency-input-form{
+        display: flex;
+        justify-content: center;
+    }
+</style>
 
 {% endblock content %}
