@@ -40,8 +40,6 @@ def delete_update_create_upcoming_launches():
         else:
             offset = offset + 100
 
-        resultCount = launchData['count']
-
     # Incoming data will be used to update the existing database.
     existingNames = []
     resultNames = []
@@ -126,8 +124,6 @@ def delete_update_create_upcoming_launches():
 
             print(f"Added : {result['name']}")
 
-    return resultCount
-
 def delete_update_create_astronauts():
     # Info needed for endpoint requests.
     LAUNCHLIBRARY2_KEY = config("LAUNCHLIBRARY2_KEY")
@@ -155,8 +151,6 @@ def delete_update_create_astronauts():
             break
         else:
             offset = offset + 100
-
-        resultCount = astronautData['count']
 
     # Incoming data will be used to update the existing database.
     existingNames = []
@@ -308,9 +302,35 @@ def delete_update_create_astronauts():
 
             print(f"Added : {result['name']}")
 
-        return resultCount
+def delete_update_create_agency():
+    # Info needed endpoint requests.
+    LAUNCHLIBRARY2_KEY = config("LAUNCHLIBRARY2_KEY")
 
+    headers = {
+        "Authorization": f"Token {LAUNCHLIBRARY2_KEY}"
+        }
 
+    # API request for upcoming launches display.
+    # gather all results into a list to paginate.
+    results = []
+    limit = 100
+    offset = 0
+
+    while True:
+        url = f'https://ll.thespacedevs.com/2.2.0/agencies/?mode=detailed&limit={limit}&offset={offset}'
+        print("requesting ", url)
+        launchResponse = requests.get(url, headers=headers)
+        launchData = launchResponse.json()
+
+        results.extend(launchData['results'])
+
+        # Breaks out of loop if all results are acquired.
+        if len(results) == launchData['count']:
+            break
+        else:
+            offset = offset + 100
+
+        resultCount = launchData['count']
 
 def home_get_APOD_view(request):
 
@@ -535,7 +555,7 @@ def run_continuously(interval=1):
     continuous_thread.start()
     return cease_continuous_run
 
-schedule.every(15).minutes.at(":00").do(delete_update_create_upcoming_launches)
-schedule.every().hour.at(':00').do(delete_update_create_astronauts)
+#schedule.every(15).minutes.at(":00").do(delete_update_create_upcoming_launches)
+#schedule.every().hour.at(':00').do(delete_update_create_astronauts)
 
-start_run_continuously = run_continuously()
+#start_run_continuously = run_continuously()
