@@ -33,3 +33,24 @@ class Astronaut(models.Model):
     def __str__(self):
         # shows an actual string representation of the astronauts name.
         return self.name
+
+class Agency(models.Model):
+
+    name = models.CharField(max_length=75)
+    administrator = models.CharField(max_length=75, null=True)
+    type = models.CharField(max_length=75, null=True)
+    country_code = models.CharField(max_length=25)
+    abbreviation = models.CharField(max_length=25)
+    description = models.TextField(null=True)
+    founding_year = models.CharField(max_length=4, null=True)
+    launchers = models.CharField(max_length=75, null=True)
+    spacecrafts = models.CharField(max_length=75, null=True)
+    total_launches = models.IntegerField()
+    successful_launches = models.IntegerField()
+    consecutive_successful_launches = models.IntegerField()
+    failed_launches = models.IntegerField()
+    pending_launches = models.IntegerField()
+    home_webpage = models.URLField(null=True)
+    wiki_page = models.URLField(null=True)
+    nation_image = models.ImageField(null=True)
+    logo = models.ImageField(null=True)
