@@ -8,7 +8,7 @@ import schedule
 import threading
 import time
 from decouple import config
-from pages.models import UpcomingLaunch, Astronaut
+from pages.models import UpcomingLaunch, Astronaut, Agency
 
 from .forms import AgencyForm, AstronautForm, LaunchForm
 
@@ -330,7 +330,263 @@ def delete_update_create_agency():
         else:
             offset = offset + 100
 
-        resultCount = launchData['count']
+    # Incoming data will be used to update the existing database.
+    existingNames = []
+    resultNames = []
+    existingData = Agency.objects.all()
+
+    for existingObject in existingData:
+        existingNames.append(existingObject.name)
+
+    for resultObject in results:
+        resultNames.append(resultObject['name'])
+
+    if existingData.exists():
+        # A check to delete launches that are no longer upcoming.
+        for existingAgency in existingNames:
+            if existingAgency not in resultNames:
+                # Delete
+                Agency.objects.get(name=existingAgency).delete()
+                print(f"Removed : {existingAgency}")
+
+        # A check to update existing db if Agency's information has changed.
+        # A check to populate existing db with new Agencies.
+        for existingAgency in existingNames:
+            for result in results:
+
+                if existingAgency == result['name']:
+
+                    # Checkts to update objects with null values.
+                    # Ex: CSIRO
+                    if result['administrator'] == None:
+                        administrator = None
+                    else:
+                        administrator = result['administrator']
+
+                    if result['type'] == None:
+                        agency_type = None
+                    else:
+                        agency_type = result['type']
+
+                    if result['description'] == None:
+                        description = None
+                    else:
+                        description = result['description']
+
+                    if result['founding_year'] == None:
+                        founding_year = None
+                    else:
+                        founding_year = result['founding_year']
+
+                    if result['launchers'] == "":
+                        launchers = None
+                    else:
+                        launchers = result['launchers']
+
+                    if result['spacecraft'] == "":
+                        spacecrafts = None
+                    else:
+                        spacecrafts = result['spacecraft']
+
+                    if result['info_url'] == None:
+                        home_webpage = None
+                    else:
+                        home_webpage = result['info_url']
+
+                    if result['wiki_url'] == None:
+                        wiki_page = None
+                    else:
+                        wiki_page = result['wiki_url']
+
+                    if result['nation_url'] == None:
+                        nation_image = None
+                    else:
+                        nation_image = result['nation_url']
+
+                    if result['logo_url'] == None:
+                        logo = None
+                    else:
+                        logo = result['logo_url']
+
+                    #update if match is found.
+                    agencyObject = Agency.objects.filter(name=result['name'])
+
+                    agencyObject.update(administrator=administrator)
+                    agencyObject.update(type=agency_type)
+                    agencyObject.update(country_code=result['country_code'])
+                    agencyObject.update(abbreviation=result['abbrev'])
+                    agencyObject.update(description=description)
+                    agencyObject.update(founding_year=founding_year)
+                    agencyObject.update(launchers=launchers)
+                    agencyObject.update(spacecrafts=spacecrafts)
+                    agencyObject.update(total_launches=result['total_launch_count'])
+                    agencyObject.update(successful_launches=result['successful_launches'])
+                    agencyObject.update(consecutive_successful_launches=result['consecutive_successful_launches'])
+                    agencyObject.update(failed_launches=result['failed_launches'])
+                    agencyObject.update(pending_launches=result['pending_launches'])
+                    agencyObject.update(home_webpage=home_webpage)
+                    agencyObject.update(wiki_page=wiki_page)
+                    agencyObject.update(nation_image=nation_image)
+                    agencyObject.update(logo=logo)
+
+                    print(f"Updated : {result['name']}")
+
+        # Create new objects from information we do not have.
+        for newAgency in results:
+            if newAgency['name'] not in existingNames:
+
+                # Checks to update objects with null values.
+                # Ex: CSIRO
+                if result['administrator'] == None:
+                    administrator = None
+                else:
+                    administrator = result['administrator']
+
+                if result['type'] == None:
+                    agency_type = None
+                else:
+                    agency_type = result['type']
+
+                if result['description'] == None:
+                    description = None
+                else:
+                    description = result['description']
+
+                if result['founding_year'] == None:
+                    founding_year = None
+                else:
+                    founding_year = result['founding_year']
+
+                if result['launchers'] == "":
+                    launchers = None
+                else:
+                    launchers = result['launchers']
+
+                if result['spacecraft'] == "":
+                    spacecrafts = None
+                else:
+                    spacecrafts = result['spacecraft']
+
+                if result['info_url'] == None:
+                    home_webpage = None
+                else:
+                    home_webpage = result['info_url']
+
+                if result['wiki_url'] == None:
+                    wiki_page = None
+                else:
+                    wiki_page = result['wiki_url']
+
+                if result['nation_url'] == None:
+                    nation_image = None
+                else:
+                    nation_image = result['nation_url']
+
+                if result['logo_url'] == None:
+                    logo = None
+                else:
+                    logo = result['logo_url']
+
+                Agency.objects.create(
+                    name=newAgency['name'],
+                    administrator=administrator,
+                    type=agency_type,
+                    country_code=newAgency['country_code'],
+                    abbreviation=newAgency['abbrev'],
+                    description=description,
+                    founding_year=founding_year,
+                    launchers=launchers,
+                    spacecrafts=spacecrafts,
+                    total_launches=newAgency['total_launch_count'],
+                    successful_launches=newAgency['successful_launches'],
+                    consecutive_successful_launches=newAgency['consecutive_successful_launches'],
+                    failed_launches=newAgency['failed_launches'],
+                    pending_launches=newAgency['pending_launches'],
+                    home_webpage=home_webpage,
+                    wiki_page=wiki_page,
+                    nation_image=nation_image,
+                    logo=logo
+                )
+
+                print(f"Added : {newAgency['name']}")
+
+    else:
+        # Initially populate the database with the first API call's information.
+        for result in results:
+            # Checks to update objects with null values.
+            # Ex: CSIRO
+            if result['administrator'] == None:
+                administrator = None
+            else:
+                administrator = result['administrator']
+
+            if result['type'] == None:
+                agency_type = None
+            else:
+                agency_type = result['type']
+
+            if result['description'] == None:
+                description = None
+            else:
+                description = result['description']
+
+            if result['founding_year'] == None:
+                founding_year = None
+            else:
+                founding_year = result['founding_year']
+
+            if result['launchers'] == "":
+                launchers = None
+            else:
+                launchers = result['launchers']
+
+            if result['spacecraft'] == "":
+                spacecrafts = None
+            else:
+                spacecrafts = result['spacecraft']
+
+            if result['info_url'] == None:
+                home_webpage = None
+            else:
+                home_webpage = result['info_url']
+
+            if result['wiki_url'] == None:
+                wiki_page = None
+            else:
+                wiki_page = result['wiki_url']
+
+            if result['nation_url'] == None:
+                nation_image = None
+            else:
+                nation_image = result['nation_url']
+
+            if result['logo_url'] == None:
+                logo = None
+            else:
+                logo = result['logo_url']
+
+            Agency.objects.create(
+                name=result['name'],
+                administrator=administrator,
+                type=agency_type,
+                country_code=result['country_code'],
+                abbreviation=result['abbrev'],
+                description=description,
+                founding_year=founding_year,
+                launchers=launchers,
+                spacecrafts=spacecrafts,
+                total_launches=result['total_launch_count'],
+                successful_launches=result['successful_launches'],
+                consecutive_successful_launches=result['consecutive_successful_launches'],
+                failed_launches=result['failed_launches'],
+                pending_launches=result['pending_launches'],
+                home_webpage=home_webpage,
+                wiki_page=wiki_page,
+                nation_image=nation_image,
+                logo=logo
+            )
+
+            print(f"Added: {result['name']}")
 
 def home_get_APOD_view(request):
 
@@ -555,7 +811,9 @@ def run_continuously(interval=1):
     continuous_thread.start()
     return cease_continuous_run
 
-#schedule.every(15).minutes.at(":00").do(delete_update_create_upcoming_launches)
-#schedule.every().hour.at(':00').do(delete_update_create_astronauts)
+# A thread/(set of instructions) awaiting the completion of a few tasks.
+schedule.every(5).minutes.at(":00").do(delete_update_create_upcoming_launches)
+schedule.every(5).minutes.at(':00').do(delete_update_create_agency)
+schedule.every(5).minutes.at(':00').do(delete_update_create_astronauts)
 
-#start_run_continuously = run_continuously()
+start_run_continuously = run_continuously()
