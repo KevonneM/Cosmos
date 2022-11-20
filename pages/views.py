@@ -412,6 +412,7 @@ def delete_update_create_agency():
                     agencyObject = Agency.objects.filter(name=result['name'])
 
                     agencyObject.update(administrator=administrator)
+                    agencyObject.update(featured=result['featured'])
                     agencyObject.update(type=agency_type)
                     agencyObject.update(country_code=result['country_code'])
                     agencyObject.update(abbreviation=result['abbrev'])
@@ -489,6 +490,7 @@ def delete_update_create_agency():
 
                 Agency.objects.create(
                     name=newAgency['name'],
+                    featured=result['featured'],
                     administrator=administrator,
                     type=agency_type,
                     country_code=newAgency['country_code'],
@@ -567,6 +569,7 @@ def delete_update_create_agency():
 
             Agency.objects.create(
                 name=result['name'],
+                featured=result['featured'],
                 administrator=administrator,
                 type=agency_type,
                 country_code=result['country_code'],
@@ -747,6 +750,8 @@ def agency_view(request):
 
     request.META['HTTP_Authorization'] = "Token " + LAUNCHLIBRARY2_KEY
 
+    # API request for agency search.
+    # response variable == to json Response in agency template.
     if request.method == "POST":
         form = AgencyForm(request.POST)
         if form.is_valid():
@@ -784,7 +789,22 @@ def agency_view(request):
     else:
         form = AgencyForm()
 
-    return render(request, 'agencies.html', { 'form': form})
+    # Where you will be working with the data that is added and updated.
+    results = Agency.objects.filter(featured=True).order_by('id')
+    resultCount = results.count()
+
+    paginator = Paginator(results, 14)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    # Context for Default Agency display.
+    context = {
+        'form': form,
+        'resultCount': resultCount,
+        'page_obj': page_obj
+    }
+
+    return render(request, 'agencies.html', context)
 
 def iss_location_info_view(request):
 
@@ -812,8 +832,8 @@ def run_continuously(interval=1):
     return cease_continuous_run
 
 # A thread/(set of instructions) awaiting the completion of a few tasks.
-schedule.every(5).minutes.at(":00").do(delete_update_create_upcoming_launches)
-schedule.every(5).minutes.at(':00').do(delete_update_create_agency)
-schedule.every(5).minutes.at(':00').do(delete_update_create_astronauts)
+#schedule.every(1).minutes.at(":00").do(delete_update_create_upcoming_launches)
+#schedule.every(1).minutes.at(':00').do(delete_update_create_agency)
+#schedule.every(1).minutes.at(':00').do(delete_update_create_astronauts)
 
-start_run_continuously = run_continuously()
+#start_run_continuously = run_continuously()
