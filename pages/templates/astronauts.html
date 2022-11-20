@@ -21,7 +21,7 @@
     <div class="card-horizontal">
         <div class="img-square-wrapper">
             {% if query.image %}
-            <img class="card-img-top" src="{{ query.image }}" alt="Space">
+            <img class="card-img-top" src="{{ query.image }}" alt="Astronaut">
             {% endif %}
         </div>
         <div class="card-body">
@@ -30,26 +30,17 @@
             <h5 class="card-title" style="text-align: center; text-decoration: underline;">{{ query.nationality }}</h5>
             <hr>
             <p class="card-title" style="text-align: center; text-decoration: underline;">{{ query.agency }}</p>
-            <p class="card-text lead mb-4" style="text-align: center;">{{ query.age }}</p>
-            <p class="card-text lead mb-4" style="text-align: center;">{{ query.date_of_birth }}</p>
-            <p class="card-text lead mb-4" style="text-align: center;">{{ query.date_of_death }}</p>
-            <p class="card-text lead mb-4" style="text-align: center;">{{ query.bio }}</p>
+            <p class="card-text lead mb-4" style="text-align: center;">Age: {{ query.age }}</p>
+            <p class="card-text lead mb-4" style="text-align: center;">DOB: {{ query.date_of_birth }}</p>
+            {% if query.date_of_death %}
+            <p class="card-text lead mb-4" style="text-align: center;">DOD: {{ query.date_of_death }}</p>
+            {% endif %}
         </div>
     </div>
     <div class="card-footer">
-        {% if query.stream_url %}
-            <div style="text-align: center;">
-                <a href="{{ query.stream_url }}"><button class="btn btn-success">View Stream</button></a>
-            </div>
-        {% else %}
-            <p style="text-align: center; padding-top: 10px;">
-                <small class="text-muted">No Stream available for this launch!</small>
-            </p>    
-        {% endif %}
+        <p class="card-text-bio lead mb-4" style="text-align: center;">{{ query.bio }}</p>
     </div>
 </div>
-
-
 
 {% empty %}
 
@@ -121,9 +112,18 @@
 {% endif %}
 
 <style>
-    .astronaut-input-form{
+    .astronaut-input-form {
         display: flex;
         justify-content: center;
+    }
+    .card-body {
+        background-color: #947696;
+    }
+    .card-footer {
+        background-color: #433445;
+    }
+    .card-text-bio {
+        color: #F0EDE5;
     }
 </style>
 

@@ -37,6 +37,7 @@ class Astronaut(models.Model):
 class Agency(models.Model):
 
     name = models.CharField(max_length=75)
+    featured = models.BooleanField()
     administrator = models.CharField(max_length=75, null=True)
     type = models.CharField(max_length=75, null=True)
     country_code = models.CharField(max_length=25)
@@ -54,3 +55,9 @@ class Agency(models.Model):
     wiki_page = models.URLField(null=True)
     nation_image = models.ImageField(null=True)
     logo = models.ImageField(null=True)
+
+    def __str__(self):
+        # shows an actual string representation of the astronauts name.
+        return self.name
+    class Meta:
+        verbose_name_plural = "Agencies"

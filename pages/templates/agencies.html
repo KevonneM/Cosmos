@@ -11,6 +11,61 @@
     </form>
 </div>
 
+{% if page_obj %}
+<div class="container" style="width: auto">
+    <div class="row justify-content-center">
+        <div class="row">
+{% for query in page_obj %}
+<div class="col-6">
+
+<div class="card mb-4" style="width: auto; height: auto;">
+    <div class="card-header">
+        <h4 class="card-title" style="text-align: center; font-style: italic;">{{ query.name }}</h4>
+    </div>
+    <div class="card-body">
+        <div class="img-square-wrapper">
+            {% if query.logo %}
+            <img class="card-img-top" src="{{ query.logo }}" alt="Rocket Launch">
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="card-footer">
+        
+        <p class="card-title" style="text-align: center;">Type: {{ query.type }}</p>
+        <h5 class="card-title" style="text-align: center; text-decoration: underline;">{{ query.administrator }}</h5>
+        <p class="card-text lead" style="text-align: center;">Founded: {{ query.founding_year }}</p>
+        <p class="card-text lead" style="text-align: center;">Abbreviation: {{ query.abbreviation }}</p>
+        <p class="card-text lead" style="text-align: center;">Country Code: {{ query.country_code }}</p>
+        <hr>
+        <p class="card-text lead" style="text-align: center;">Launchers: {{ query.launchers }}</p>
+        <p class="card-text lead" style="text-align: center;">SpaceCrafts: {{ query.spacecrafts }}</p>
+        <hr>
+        <div class="Stats">
+            <h5 class="mb-2" id="success">Successful Launches: {{ query.successful_launches }}</h5>
+            <h5 class="mb-2" id="failed">Failed Launches: {{ query.failed_launches }}</h5>
+            <h5 id="pending">Pending Launches: {{ query.pending_launches }}</h5>
+        </div>
+        <hr>
+        <p class="card-text lead" style="text-align: center;">Home Webpage: <a href="{{query.home_webpage}}">Click Here!</a></p>
+        <p class="card-text lead" style="text-align: center;">Wiki Page: <a href="{{query.wiki_page}}">Click Here!</a></p>
+
+    </div>
+</div>
+
+</div>
+{% empty %}
+
+<h1>No Results Available.</h1>
+
+{% endfor %}  
+
+</div>
+</div>
+</div>
+
+{% endif %}
+
 {% if jsonResponse %}
 {% for query in jsonResponse.results %}
 
@@ -39,10 +94,51 @@
 {% endfor %}
 {% endif %}
 
+<h2 style="text-align: center;">{{ resultCount }} Results Available</h2>
+
+<div class="pagination justify-content-center">
+
+    <span class="step-links">
+        <ul class="pagination">
+
+        {% if page_obj.has_previous %}
+            <a class="page-link" href="?page=1">&laquo; first</a>
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current mx-4" style="align-content: center;">
+            page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        </span>
+
+        {% if page_obj.has_next %}
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}">next</a>
+            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+
+        </ul>
+    </span>
+
+</div>
+
 <style>
     .agency-input-form{
         display: flex;
         justify-content: center;
+    }
+    .card{
+        background-color: #957696;
+        display: flex;
+        flex-direction: column;
+    }
+    .card-body{
+        background-color: #424242;
+    }
+    .img-square-wrapper{
+        display: flex;
+        justify-content: center;
+    }
+    .card-img-top{
+        object-fit: contain;
     }
 </style>
 

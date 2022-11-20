@@ -141,3 +141,22 @@ h5 {
 p {
     font-size: 18px;
 }
+
+.Stats #success {
+    font-size: 22px;
+    border-width: 2px;
+    border-color: #32CD32;
+    border-style: solid;
+}
+.Stats #failed {
+    font-size: 22px;
+    border-width: 2px;
+    border-color: #D21F3C;
+    border-style: solid;
+}
+.Stats #pending {
+    font-size: 22px;
+    border-width: 2px;
+    border-color: #363636;
+    border-style: solid;
+}
