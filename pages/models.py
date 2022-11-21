@@ -6,6 +6,7 @@ class UpcomingLaunch(models.Model):
 
     name = models.CharField(max_length=75)
     launch_provider = models.CharField(max_length=75)
+    launch_provider_abbrev = models.CharField(max_length=75)
     launch_location = models.CharField(max_length=75)
     launch_date_time = models.CharField(max_length=75)
     launch_status = models.CharField(max_length=75)

@@ -9,6 +9,7 @@ import threading
 import time
 from decouple import config
 from pages.models import UpcomingLaunch, Astronaut, Agency
+from django.db.models import Q
 
 from .forms import AgencyForm, AstronautForm, LaunchForm
 
@@ -75,6 +76,7 @@ def delete_update_create_upcoming_launches():
                     launchObject = UpcomingLaunch.objects.filter(name=result['name'])
 
                     launchObject.update(launch_provider=result['launch_service_provider']['name'])
+                    launchObject.update(launch_provider_abbrev=result['launch_service_provider']['abbrev'])
                     launchObject.update(launch_location=result['pad']['location']['name'])
                     launchObject.update(launch_date_time=result['window_start'])
                     launchObject.update(launch_status=result['status']['abbrev'])
@@ -95,6 +97,7 @@ def delete_update_create_upcoming_launches():
                 UpcomingLaunch.objects.create(
                     name = newLaunch['name'],
                     launch_provider = newLaunch['launch_service_provider']['name'],
+                    launch_provider_abbrev = result['launch_service_provider']['abbrev'],
                     launch_location = newLaunch['pad']['location']['name'],
                     launch_date_time = newLaunch['window_start'],
                     launch_status = newLaunch['status']['abbrev'],
@@ -115,6 +118,7 @@ def delete_update_create_upcoming_launches():
             UpcomingLaunch.objects.create(
                 name = result['name'],
                 launch_provider = result['launch_service_provider']['name'],
+                launch_provider_abbrev = result['launch_service_provider']['abbrev'],
                 launch_location = result['pad']['location']['name'],
                 launch_date_time = result['window_start'],
                 launch_status = result['status']['abbrev'],
@@ -606,45 +610,29 @@ def home_get_APOD_view(request):
     return render(request, 'home.html', context)
 
 def launch_event_view(request):
-    # Info needed for endpoint requests.
-    LAUNCHLIBRARY2_KEY = config("LAUNCHLIBRARY2_KEY")
 
-    headers = {
-        "Authorization": f"Token {LAUNCHLIBRARY2_KEY}"
-        }
-
-    # API request for any launch search.
-    # response variable == to jsonResponse in launch/events template.
+    # Response based on form submission from user.
     if request.method == "POST":
-
-        searchResults = []
-
         form = LaunchForm(request.POST)
         if form.is_valid():
             launch = form.cleaned_data['launch_name']
 
-            url = 'https://ll.thespacedevs.com/2.2.0/launch/?mode=detailed&search=' + launch
+            object_list = UpcomingLaunch.objects.filter(Q(name__icontains=launch) | Q(launch_provider_abbrev__icontains=launch) | Q(launch_provider__icontains=launch)).order_by('id')
 
-            r = requests.get(url, headers=headers)
-            
-            if r.status_code == 200:
-                jsonResponse = r.json()
-                print(r.request.headers)
+            resultCount = object_list.count()
 
-                for result in jsonResponse['results']:
+            paginator = Paginator(object_list, 12)
+            page_number = request.GET.get('page')
+            page_obj = paginator.get_page(page_number)
 
-                    searchResults.append(result)
+            context = {
+                'form': form,
+                'resultCount': resultCount,
+                'page_obj': page_obj,
+            }
 
-                context = {
-                    'form': form,
-                    'jsonResponse': searchResults,
-                }
-
-                return render(request, 'launches-events.html', context)
-            elif r.status_code == 429:
-                return HttpResponse("Too many requests to LL2 Api.")
-            else:
-                return HttpResponse("No record of the requested Astronaut.")
+            return render(request, 'launches-events.html', context)
+        
         else:
             return HttpResponse("Form is invalid.")
 
@@ -662,56 +650,36 @@ def launch_event_view(request):
     # Context for Default launch display.
     context = {
         'form': form,
-        'resultCount': resultCount,
-        'page_obj': page_obj
+        'upcomingCount': resultCount,
+        'page_obj': page_obj,
     }
     
     return render(request, 'launches-events.html', context)
 
 def astronaut_view(request):
-    # Info needed for endpoint requests.
-    LAUNCHLIBRARY2_KEY = config("LAUNCHLIBRARY2_KEY")
 
-    headers = {
-        "Accepts":"application/json",
-        "Content-Type": "application/json",
-        "Authorization": f"Token {LAUNCHLIBRARY2_KEY}"
-        }
-
-    request.META['HTTP_Authorization'] = "Token " + LAUNCHLIBRARY2_KEY
-
-    # API request for any astronaut search.
-    # response variable == to jsonResponse in astronauts template.
+    # Response based on form submission from user.
     if request.method == "POST":
         form = AstronautForm(request.POST)
         if form.is_valid():
             astronaut = form.cleaned_data['astronaut_name']
 
-            url = 'https://ll.thespacedevs.com/2.2.0/astronaut/?search='+astronaut
-
-            r = requests.get(url, headers=headers)
+            object_list = Astronaut.objects.filter(Q(name__icontains=astronaut) | Q(nationality__icontains=astronaut) | Q(agency__icontains=astronaut)).order_by('id')
             
-            if r.status_code == 200:
-                jsonResponse = r.json()
+            resultCount = object_list.count()
 
-                for result in jsonResponse['results']:
-                    print(r)
-                    print(request.headers.get('Authorization'))
-                    print("Response successfully returned for " + result['name'])
+            paginator = Paginator(object_list, 12)
+            page_number = request.GET.get('page')
+            page_obj = paginator.get_page(page_number)
 
-                context = {
-                    'form': form,
-                    'jsonResponse': jsonResponse,
-                }
+            context = {
+                'form': form,
+                'resultCount': resultCount,
+                'page_obj': page_obj,
+            }
 
-                return render(request, 'astronauts.html', context)
-            elif r.status_code == 429:
-                print(r)
-                print(request.headers.get('Authorization'))
-                return HttpResponse("Too many requests to LL2 Api.")
-            else:
-                print(r)
-                return HttpResponse("No record of the requested Astronaut.")
+            return render(request, 'astronauts.html', context)
+
         else:
             print(form)
             return HttpResponse("Form is invalid.")
@@ -730,58 +698,36 @@ def astronaut_view(request):
     # Context for Default Astronaut display.
     context = {
         'form': form,
-        'resultCount': resultCount,
-        'page_obj': page_obj
+        'astronautCount': resultCount,
+        'page_obj': page_obj,
     }
 
     return render(request, 'astronauts.html', context)
 
 def agency_view(request):
 
-    url = 'https://ll.thespacedevs.com/2.2.0/agencies/?search='
-
-    LAUNCHLIBRARY2_KEY = config("LAUNCHLIBRARY2_KEY")
-
-    headers = {
-        "Accepts":"application/json",
-        "Content-Type": "application/json",
-        "Authorization": f"Token {LAUNCHLIBRARY2_KEY}"
-        }
-
-    request.META['HTTP_Authorization'] = "Token " + LAUNCHLIBRARY2_KEY
-
-    # API request for agency search.
-    # response variable == to json Response in agency template.
+    # Response based on form submission from user.
     if request.method == "POST":
         form = AgencyForm(request.POST)
         if form.is_valid():
             agency = form.cleaned_data['agency_name']
 
-            url = 'https://ll.thespacedevs.com/2.2.0/agencies/?search='+agency
+            object_list = Agency.objects.filter(Q(name__icontains=agency) | Q(abbreviation__icontains=agency) | Q(type__icontains=agency)).order_by('id')
 
-            r = requests.get(url, headers=headers)
-            
-            if r.status_code == 200:
-                jsonResponse = r.json()
+            resultCount = object_list.count()
 
-                for result in jsonResponse['results']:
-                    print(r)
-                    print(request.headers.get('Authorization'))
-                    print("Response successfully returned for " + result['name'])
+            paginator = Paginator(object_list, 12)
+            page_number = request.GET.get('page')
+            page_obj = paginator.get_page(page_number)
 
-                context = {
-                    "form": form,
-                    'jsonResponse': jsonResponse
-                }
+            context = {
+                "form": form,
+                'resultCount': resultCount,
+                'page_obj': page_obj,
+            }
 
-                return render(request, 'agencies.html', context)
-            elif r.status_code == 429:
-                print(r)
-                print(request.headers.get('Authorization'))
-                return HttpResponse("Too many requests to LL2 Api.")
-            else:
-                print(r)
-                return HttpResponse("No record of the requested Space Agency.")
+            return render(request, 'agencies.html', context)
+
         else:
             print(form)
             return HttpResponse("Form is invalid.")
@@ -800,7 +746,7 @@ def agency_view(request):
     # Context for Default Agency display.
     context = {
         'form': form,
-        'resultCount': resultCount,
+        'featuredCount': resultCount,
         'page_obj': page_obj
     }
 
@@ -834,6 +780,6 @@ def run_continuously(interval=1):
 # A thread/(set of instructions) awaiting the completion of a few tasks.
 #schedule.every(1).minutes.at(":00").do(delete_update_create_upcoming_launches)
 #schedule.every(1).minutes.at(':00').do(delete_update_create_agency)
-#schedule.every(1).minutes.at(':00').do(delete_update_create_astronauts)
+#schedule.every(3).minutes.at(':00').do(delete_update_create_astronauts)
 
 #start_run_continuously = run_continuously()

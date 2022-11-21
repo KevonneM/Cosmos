@@ -11,6 +11,13 @@
     </form>
 </div>
 
+{% if resultCount %}
+<h2 style="text-align: center;">{{ resultCount }} Results Available</h2>
+{% endif %}
+{% if featuredCount %}
+<h2 style="text-align: center;">{{ featuredCount }} Agencies Featured</h2>
+{% endif %}
+
 {% if page_obj %}
 <div class="container" style="width: auto">
     <div class="row justify-content-center">
@@ -36,7 +43,6 @@
         <h5 class="card-title" style="text-align: center; text-decoration: underline;">{{ query.administrator }}</h5>
         <p class="card-text lead" style="text-align: center;">Founded: {{ query.founding_year }}</p>
         <p class="card-text lead" style="text-align: center;">Abbreviation: {{ query.abbreviation }}</p>
-        <p class="card-text lead" style="text-align: center;">Country Code: {{ query.country_code }}</p>
         <hr>
         <p class="card-text lead" style="text-align: center;">Launchers: {{ query.launchers }}</p>
         <p class="card-text lead" style="text-align: center;">SpaceCrafts: {{ query.spacecrafts }}</p>
@@ -65,36 +71,6 @@
 </div>
 
 {% endif %}
-
-{% if jsonResponse %}
-{% for query in jsonResponse.results %}
-
-<div class="card" style="width: 28rem;">
-    {% if query.image_url %}
-    <img src="{{ query.image_url }}" class="card-img-top" alt="...">
-    {% endif %}
-    <div class="card-body">
-        <h3 class="card-title" style="text-align: center;">{{ query.abbrev }}</h3>
-        <h5 class="card-title" style="text-align: center;">
-        Agency Name: {{ query.name }}</h5>
-        <hr>
-
-        <h5 class="card-title" style="text-align: center;">Founding_year: {{ query.founding_year }}</h5>
-
-    <p class="card-text" style="text-align: center;">Country Code: {{ query.country_code }}</p>
-    <hr>
-    <p class="card-text" style="text-align: center;">{{ query.description }}</p>
-    <p class="card-text" style="text-align: center;">Agency Type: {{ query.type }}</p>
-    </div>
-</div>
-{% empty %}
-
-<h1>No Results Available.</h1>
-
-{% endfor %}
-{% endif %}
-
-<h2 style="text-align: center;">{{ resultCount }} Results Available</h2>
 
 <div class="pagination justify-content-center">
 
