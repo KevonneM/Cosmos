@@ -11,6 +11,13 @@
   </form>
 </div>
 
+{% if resultCount %}
+<h2 style="text-align: center;">{{ resultCount }} Results Available</h2>
+{% endif %}
+{% if astronautCount %}
+<h2 style="text-align: center;">{{ astronautCount }} Astronauts</h2>
+{% endif %}
+
 {% if page_obj %}
 <div class="container" style="width: 100vw">
     <div class="row justify-content-center">
@@ -53,37 +60,7 @@
 
 {% endif %}
 
-{% if jsonResponse %}
-{% for query in jsonResponse.results %}
-
-<div class="card" style="width: 28rem;">
-    {% if query.profile_image %}
-    <img src="{{ query.profile_image }}" class="card-img-top" alt="...">
-    {% endif %}
-    <div class="card-body">
-        <h3 class="card-title" style="text-align: center;">{{ query.name }}</h3>
-        <h5 class="card-title" style="text-align: center;">
-        Agency: {{ query.agency.abbrev }}</h5>
-        <hr>
-
-        <h5 class="card-title" style="text-align: center;">{{ query.bio }}</h5>
-    <hr>
-    <p class="card-text" style="text-align: center;">Date of Birth: {{ query.date_of_birth }}</p>
-    {% if query.date_of_death %}
-      <p class="card-text" style="text-align: center;">Date of Death: {{ query.date_of_death }}</p>
-    {% endif %}
-    </div>
-</div>
-{% empty %}
-
-<h1>No Results Available.</h1>
-
-{% endfor %}
-{% endif %}
-
 {% if page_obj %}
-
-<h2 style="text-align: center;">{{ resultCount }} Results Available</h2>
 
 <div class="pagination justify-content-center">
 
