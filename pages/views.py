@@ -84,7 +84,7 @@ def delete_update_create_upcoming_launches():
                     launchObject.update(image=result['image'])
 
                     print(f"Updated : {result['name']}")
-            
+
         # Create new objects from information we do not have.
         for newLaunch in results:
             if newLaunch['name'] not in existingNames:
@@ -227,28 +227,28 @@ def delete_update_create_astronauts():
 
                 # Check for objects with null value for agency.
                 # Ex: Gregory Olsen
-                if result['agency'] == None:
+                if newAstronaut['agency'] is None:
                     agency = None
                 else:
-                    agency = result['agency']['name']
+                    agency = newAstronaut['agency']['name']
                 # Check for objects with null value for DOB.
                 # Ex: Little Earth
-                if result['date_of_birth'] == None:
+                if newAstronaut['date_of_birth'] is None:
                     date_of_birth = None
                 else:
-                    date_of_birth = result['date_of_birth']
+                    date_of_birth = newAstronaut['date_of_birth']
                 # Check for objects with null value for DOD.
                 # Ex: Little Earth
-                if result['date_of_death'] == None:
+                if newAstronaut['date_of_death'] is None:
                     date_of_death = None
                 else:
-                    date_of_death = result['date_of_death']
+                    date_of_death = newAstronaut['date_of_death']
                 # Check for objects with null value for Age.
                 # Ex: Little Earth
-                if result['age'] == None:
+                if newAstronaut['age'] is None:
                     age = None
                 else:
-                    age = result['age']
+                    age = newAstronaut['age']
 
                 Astronaut.objects.create(
                     name=newAstronaut['name'],
@@ -632,7 +632,7 @@ def launch_event_view(request):
             }
 
             return render(request, 'launches-events.html', context)
-        
+       
         else:
             return HttpResponse("Form is invalid.")
 
@@ -665,7 +665,7 @@ def astronaut_view(request):
             astronaut = form.cleaned_data['astronaut_name']
 
             object_list = Astronaut.objects.filter(Q(name__icontains=astronaut) | Q(nationality__icontains=astronaut) | Q(agency__icontains=astronaut)).order_by('id')
-            
+         
             resultCount = object_list.count()
 
             paginator = Paginator(object_list, 12)
@@ -780,6 +780,6 @@ def run_continuously(interval=1):
 # A thread/(set of instructions) awaiting the completion of a few tasks.
 #schedule.every(1).minutes.at(":00").do(delete_update_create_upcoming_launches)
 #schedule.every(1).minutes.at(':00').do(delete_update_create_agency)
-#schedule.every(3).minutes.at(':00').do(delete_update_create_astronauts)
+#schedule.every(2).minutes.at(':00').do(delete_update_create_astronauts)
 
 #start_run_continuously = run_continuously()
