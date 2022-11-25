@@ -640,7 +640,7 @@ def launch_event_view(request):
         form = LaunchForm()
 
     # Where you will be working with the data that is added and updated.
-    results = UpcomingLaunch.objects.all().order_by('id')
+    results = UpcomingLaunch.objects.all().order_by('launch_date_time')
     resultCount = results.count()
 
     paginator = Paginator(results, 12)
@@ -780,6 +780,6 @@ def run_continuously(interval=1):
 # A thread/(set of instructions) awaiting the completion of a few tasks.
 #schedule.every(1).minutes.at(":00").do(delete_update_create_upcoming_launches)
 #schedule.every(1).minutes.at(':00').do(delete_update_create_agency)
-#schedule.every(2).minutes.at(':00').do(delete_update_create_astronauts)
+#schedule.every(1).minutes.at(':00').do(delete_update_create_astronauts)
 
 #start_run_continuously = run_continuously()
