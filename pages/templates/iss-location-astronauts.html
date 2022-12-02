@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block content %}
 
@@ -22,5 +23,52 @@
       {% endfor %}
     </tbody>
   </table>
+
+  <div id="map"></div>
+  
+  <style>
+
+    #map {
+      height: 500px;
+    }
+
+  </style>
+  <script>
+
+    var world_street_map = L.tileLayer('Http://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+      attribution: "Tiles &copy; Esri &mdash; Source: Esri, Delorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012"
+    });
+
+    var map = L.map('map', {
+      layers: [world_street_map]
+    }).setView([0, 0], 2)
+
+    var issIcon = L.icon({iconUrl: "{% static 'img/ISS.jpeg' %}", iconSize:[40, 40]});
+    var issMark = L.marker([0, 0], {icon: issIcon}).addTo(map);
+    
+    var issCircle = L.circleMarker([0,0], {
+      color: 'blue',
+      fillColor: '#A020F0',
+      fillOpacity: 0.5,
+      radius: 50
+    }).addTo(map);
+
+    function trackISS () {
+      $.getJSON('http://api.open-notify.org/iss-now.json?callback=?', function(data) {
+
+        var longitude = data['iss_position']['longitude'];
+        var latitude = data['iss_position']['latitude'];
+
+        issMark.setLatLng([latitude, longitude]);
+        issCircle.setLatLng([latitude, longitude]);
+
+        map.panTo([latitude, longitude], animate=true);
+        
+      });
+     
+    }
+    trackISS();
+    setInterval(trackISS, 5000);
+  </script>
 
 {% endblock content %}
