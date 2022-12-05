@@ -3,13 +3,13 @@
 {% block content %}
 
 <div class="jumbotron mx-auto mt-5" style="max-height: fit-content; min-width: 400px; max-width: 500px">
-    <h1 class="display-4 mb-3" style="text-align: center;">Welcome to Cosmos!</h1>
+    <h1 class="display-4 mb-3" style="text-align: center; color: #DBC8FF;">Welcome to Cosmos!</h1>
     <hr class="my-4">
-    <h2 class="lead" style="text-align: center;">Cosmos is a web-application that will provide users with data on missions/launches and events regarding space travel.</h2>
-    <p class="lead" style="text-align: center;">The application will also provide the real-time location of the ISS around the earth along with information about space agencies currently operating.</p>
+    <h2 class="lead" style="text-align: center; color: #DBC8FF;">Cosmos is a web-application that will provide users with data on missions/launches and events regarding space travel.</h2>
+    <p class="lead" style="text-align: center; color: #DBC8FF;">The application will also provide the real-time location of the ISS around the earth along with information about space agencies currently operating.</p>
     <hr>
 
-    <h1 class="lead mb-2" style="text-align: center; font-weight: bold;">NASA's "Astronomy Picture of the Day"</h1>
+    <h1 class="lead mb-2" style="text-align: center; font-weight: bold; color: #DBC8FF;">NASA's "Astronomy Picture of the Day"</h1>
     <div class="card" style="width: 28rem;">
         <img src="{{ jsonResponse.url }}" class="card-img-top" alt="...">
         <div class="card-body">
@@ -27,5 +27,11 @@
     </div>
 
 </div>
+
+<style>
+    .jumbotron {
+        background-color: #4E0076;
+    }
+</style>
 
 {% endblock content %}
