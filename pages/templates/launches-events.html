@@ -3,7 +3,7 @@
 
 {% block content %}
 
-<div class="launch-input-form">
+<div class="launch-input-form mt-2">
     <form action="{% url 'pages:launches-events' %}" method="post" class="form-inline my-2 my-lg-0">
         {% csrf_token %}
         {{ form|crispy }}
@@ -12,10 +12,10 @@
 </div>
 
 {% if resultCount %}
-<h2 style="text-align: center;">{{ resultCount }} Results Available</h2>
+<h2 class="mt-2 mb-2" style="text-align: center; color: #DBC8FF;">{{ resultCount }} Results Available</h2>
 {% endif %}
 {% if upcomingCount %}
-<h2 style="text-align: center;">{{ upcomingCount }} Upcoming Launches</h2>
+<h2 class="mt-2 mb-2" style="text-align: center; color: #DBC8FF;">{{ upcomingCount }} Upcoming Launches</h2>
 {% endif %}
 
 {% if page_obj %}
@@ -32,17 +32,17 @@
             {% endif %}
         </div>
         <div class="card-body">
-            <h4 class="card-title" style="text-align: center;">{{ query.name }}</h4>
-            <h5 class="card-title" style="text-align: center; text-decoration: underline;">{{ query.launch_provider }}</h5>
+            <h4 class="card-title" style="text-align: center; color: #DBC8FF;">{{ query.name }}</h4>
+            <h5 class="card-title" style="text-align: center; text-decoration: underline; color: #DBC8FF;">{{ query.launch_provider }}</h5>
             <hr>
-            <p class="card-title" style="text-align: center;">{{ query.launch_location }}</p>
-            <p class="card-text lead mb-4" style="text-align: center;">Scheduled Date: {{ query.launch_date_time }}</p>
+            <p class="card-title" style="text-align: center; color: #DBC8FF;">{{ query.launch_location }}</p>
+            <p class="card-text lead mb-4" style="text-align: center; color: #DBC8FF;">Scheduled Date: {{ query.launch_date_time }}</p>
 
             <div class="mb-4">
                 <td><div class="launchCountdown" start="{{ query.launch_date_time }}"></div></td>
             </div>
 
-            <p class="card-text lead" style="text-align: center;">Launch Status: {{ query.launch_status }}</p>
+            <p class="card-text lead" style="text-align: center; color: #DBC8FF;">Launch Status: {{ query.launch_status }}</p>
         </div>
     </div>
     <div class="card-footer">
@@ -51,7 +51,7 @@
                 <a href="{{ query.stream_url }}"><button class="btn btn-success">View Stream</button></a>
             </div>
         {% else %}
-            <p style="text-align: center; padding-top: 10px;">
+            <p style="text-align: center; padding-top: 10px; padding-bottom: 10px;">
                 <small class="text-muted">No Stream available for this launch!</small>
             </p>    
         {% endif %}
@@ -116,23 +116,26 @@
         display: flex;
         justify-content: center;
     }
+    .card{
+        border-radius: 15px 75px;
+        overflow: hidden;
+    }
     .card-horizontal{
-        background-color: #947696;
+        background-color: #4E0076;
     }
     .card-footer{
         background-color: #433445;
     }
     body{
         text-align: center;
-        background: #557655;
-      font-family: sans-serif;
-      font-weight: 100;
+        font-family: sans-serif;
+        font-weight: 100;
     }
     h1{
-      color: #396;
-      font-weight: 100;
-      font-size: 40px;
-      margin: 40px 0px 20px;
+        color: #396;
+        font-weight: 100;
+        font-size: 40px;
+        margin: 40px 0px 20px;
     }
      #clockdiv{
         font-family: sans-serif;

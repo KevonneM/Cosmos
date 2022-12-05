@@ -4,7 +4,7 @@
 
 {% block content %}
 
-<div class="agency-input-form">
+<div class="agency-input-form mt-2">
     <form action="{% url 'pages:agencies' %}" method="post" class="form-inline my-2 my-lg-0">
         {% csrf_token %}
         {{ form|crispy }}
@@ -13,10 +13,10 @@
 </div>
 
 {% if resultCount %}
-<h2 style="text-align: center;">{{ resultCount }} Results Available</h2>
+<h2 class="mb-2" style="text-align: center; color: #DBC8FF;">{{ resultCount }} Results Available</h2>
 {% endif %}
 {% if featuredCount %}
-<h2 style="text-align: center;">{{ featuredCount }} Agencies Featured</h2>
+<h2 class="mb-2" style="text-align: center; color: #DBC8FF;">{{ featuredCount }} Agencies Featured</h2>
 {% endif %}
 
 {% if page_obj %}
@@ -105,7 +105,9 @@
         justify-content: center;
     }
     .card{
-        background-color: #957696;
+        border-radius: 15px;
+        overflow: hidden;
+        background-color: #B691FF;
         display: flex;
         flex-direction: column;
     }

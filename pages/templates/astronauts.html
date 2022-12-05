@@ -3,7 +3,7 @@
 
 {% block content %}
 
-<div class="astronaut-input-form">
+<div class="astronaut-input-form mt-2">
   <form action="{% url 'pages:astronauts' %}" method="post" class="form-inline my-2 my-lg-0">
     {% csrf_token %}
     {{ form|crispy }}
@@ -12,10 +12,10 @@
 </div>
 
 {% if resultCount %}
-<h2 style="text-align: center;">{{ resultCount }} Results Available</h2>
+<h2 class="mb-2" style="text-align: center; color: #DBC8FF;">{{ resultCount }} Results Available</h2>
 {% endif %}
 {% if astronautCount %}
-<h2 style="text-align: center;">{{ astronautCount }} Astronauts</h2>
+<h2 class="mb-2" style="text-align: center; color: #DBC8FF;">{{ astronautCount }} Astronauts</h2>
 {% endif %}
 
 {% if page_obj %}
@@ -89,15 +89,19 @@
 {% endif %}
 
 <style>
+    .card {
+        border-radius: 15px 75px;
+        overflow: hidden;
+    }
     .astronaut-input-form {
         display: flex;
         justify-content: center;
     }
     .card-body {
-        background-color: #947696;
+        background-color: #B691FF;
     }
     .card-footer {
-        background-color: #433445;
+        background-color: #4E0076;
     }
     .card-text-bio {
         color: #F0EDE5;
