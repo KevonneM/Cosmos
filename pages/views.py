@@ -785,6 +785,6 @@ def run_continuously(interval=1):
 """
 schedule.every(5).minutes.at(":00").do(delete_update_create_upcoming_launches)
 schedule.every().day.at('12:00').do(delete_update_create_agency)
-schedule.every().day.at(':00').do(delete_update_create_astronauts)
+schedule.every().day.at('12:00').do(delete_update_create_astronauts)
 
 start_run_continuously = run_continuously()
