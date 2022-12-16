@@ -778,8 +778,13 @@ def run_continuously(interval=1):
     return cease_continuous_run
 
 # A thread/(set of instructions) awaiting the completion of a few tasks.
-#schedule.every(1).minutes.at(":00").do(delete_update_create_upcoming_launches)
-#schedule.every(1).minutes.at(':00').do(delete_update_create_agency)
-#schedule.every(1).minutes.at(':00').do(delete_update_create_astronauts)
+# Max number of API calls at single point of the day is 48.
+""" 4 calls/day : Agency
+    8 calls/day : Astronaut
+    36 calls/minut : Upcoming Launches
+"""
+schedule.every(5).minutes.at(":00").do(delete_update_create_upcoming_launches)
+schedule.every().day.at('12:00').do(delete_update_create_agency)
+schedule.every().day.at(':00').do(delete_update_create_astronauts)
 
-#start_run_continuously = run_continuously()
+start_run_continuously = run_continuously()
