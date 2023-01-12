@@ -13,9 +13,13 @@ from django.db.models import Q
 
 from .forms import AgencyForm, AstronautForm, LaunchForm
 
+import json
+with open('/etc/config.json') as config_file:
+    config = json.load(config_file)
+
 def delete_update_create_upcoming_launches():
     # Info needed endpoint requests.
-    LAUNCHLIBRARY2_KEY = config("LAUNCHLIBRARY2_KEY")
+    LAUNCHLIBRARY2_KEY = config.get("LAUNCHLIBRARY2_KEY")
 
     headers = {
         "Authorization": f"Token {LAUNCHLIBRARY2_KEY}"
@@ -24,7 +28,7 @@ def delete_update_create_upcoming_launches():
     # API request for upcoming launches display.
     # gather all results into a list to paginate.
     results = []
-    limit = 100
+    limit = 99
     offset = 0
     
     while True:
@@ -39,7 +43,7 @@ def delete_update_create_upcoming_launches():
         if len(results) == launchData['count']:
             break
         else:
-            offset = offset + 100
+            offset = offset + 99
 
     # Incoming data will be used to update the existing database.
     existingNames = []
@@ -130,7 +134,7 @@ def delete_update_create_upcoming_launches():
 
 def delete_update_create_astronauts():
     # Info needed for endpoint requests.
-    LAUNCHLIBRARY2_KEY = config("LAUNCHLIBRARY2_KEY")
+    LAUNCHLIBRARY2_KEY = config.get("LAUNCHLIBRARY2_KEY")
 
     headers = {
         "Authorization": f"Token {LAUNCHLIBRARY2_KEY}"
@@ -308,7 +312,7 @@ def delete_update_create_astronauts():
 
 def delete_update_create_agency():
     # Info needed endpoint requests.
-    LAUNCHLIBRARY2_KEY = config("LAUNCHLIBRARY2_KEY")
+    LAUNCHLIBRARY2_KEY = config.get("LAUNCHLIBRARY2_KEY")
 
     headers = {
         "Authorization": f"Token {LAUNCHLIBRARY2_KEY}"
@@ -597,7 +601,7 @@ def delete_update_create_agency():
 
 def home_get_APOD_view(request):
 
-    NASA_KEY = config('NASA_KEY')
+    NASA_KEY = config.get('NASA_KEY')
 
     url = 'https://api.nasa.gov/planetary/apod?api_key='+NASA_KEY
 
@@ -781,9 +785,11 @@ def run_continuously(interval=1):
 # Max number of API calls at single point of the day is 48.
 """ 4 calls/day : Agency
     8 calls/day : Astronaut
-    36 calls/minut : Upcoming Launches
+    18 calls/hour or 3 calls/10-minutes : Upcoming Launches
+    30 calls/hr max at peak
+    API Call limit 45/hr
 """
-schedule.every(5).minutes.at(":00").do(delete_update_create_upcoming_launches)
+schedule.every().hour.at(":00").do(delete_update_create_upcoming_launches)
 schedule.every().day.at('12:00').do(delete_update_create_agency)
 schedule.every().day.at('12:00').do(delete_update_create_astronauts)
 
