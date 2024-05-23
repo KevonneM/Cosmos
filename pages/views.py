@@ -14,12 +14,10 @@ from django.db.models import Q
 from .forms import AgencyForm, AstronautForm, LaunchForm
 
 import json
-with open('/etc/config.json') as config_file:
-    config = json.load(config_file)
 
 def delete_update_create_upcoming_launches():
     # Info needed endpoint requests.
-    LAUNCHLIBRARY2_KEY = config.get("LAUNCHLIBRARY2_KEY")
+    LAUNCHLIBRARY2_KEY = config("LAUNCHLIBRARY2_KEY")
 
     headers = {
         "Authorization": f"Token {LAUNCHLIBRARY2_KEY}"
@@ -601,11 +599,25 @@ def delete_update_create_agency():
 
 def home_get_APOD_view(request):
 
-    NASA_KEY = config.get('NASA_KEY')
+    NASA_KEY = config('NASA_KEY')
 
     url = 'https://api.nasa.gov/planetary/apod?api_key='+NASA_KEY
 
-    response = requests.get(url).json()
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+
+        if response.text:
+            response_json = response.json()
+        else:
+            print(f"Empty response received: HTTP Status {response.status_code}")
+            raise ValueError("Empty response received from NASA API")
+    except requests.RequestException as e:
+        print(f"Network or HTTP error: {e}, URL: {url}")
+        response_json = {"error": f"Network or HTTP error: {str(e)}"}
+    except ValueError as e:
+        print(f"Data processing error: {e}, Response: {response.text}")
+        response_json = {"error": f"Data processing error: {str(e)}"}
 
     context = {
         "jsonResponse": response
